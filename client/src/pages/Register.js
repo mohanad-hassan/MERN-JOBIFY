@@ -1,7 +1,9 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Logo, FormRow, Alert } from "../components";
 import Wrapper from "../assets/wrappers/RegisterPage";
 import { useAppContext } from "../context/appContext";
+import { useNavigate } from "react-router-dom";
+
 const initialState = {
   name: "",
   email: "",
@@ -11,7 +13,8 @@ const initialState = {
 
 const Register = () => {
   const [values, setValues] = useState(initialState);
-  const { showAlert, isLoading, displayAlert, clearAlert } = useAppContext();
+  const { showAlert, isLoading, displayAlert, clearAlert,registerUser,user,loginUser } = useAppContext();
+  const navigate = useNavigate()
 
   const toggleMember = () => {
     setValues({ ...values, isMember: !values.isMember });
@@ -27,8 +30,26 @@ const Register = () => {
       displayAlert();
       return clearAlert();
     }
-    console.log(values);
+if (!isMember) {
+  registerUser({name,email,password})
+  clearAlert()
+}
+if (isMember) {
+  loginUser({email,password})
+  clearAlert()
+}
   };
+
+  useEffect (() => { 
+    // go to dash board is thier is user 
+  if(user ) {
+    setTimeout(() => {
+      navigate('/')
+    }, 3000);
+  }
+  
+    
+     },[user,navigate])
 
   return (
     <Wrapper className="full-page">
@@ -61,14 +82,14 @@ const Register = () => {
           value={values.password}
           handleChange={handleChange}
         />
-        <button type="submit" className="btn btn-block" disabled={false}>
+        <button type="submit" className="btn btn-block" disabled={isLoading}>
           submit
         </button>
 
         <p>
           {values.isMember ? "Not a member yet?" : "Already a member?"}
-          <button type="button" onClick={toggleMember} className="member-btn">
-            {values.isMember ? "Register" : "Login"}
+          <button type="button" onClick={toggleMember} className="member-btn" >
+            {values.isMember ? "Register" : "Login"} 
           </button>
         </p>
       </form>

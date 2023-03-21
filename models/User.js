@@ -16,6 +16,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide email"],
         validate: {
+            //validator.isEmail is comming from external library  just is fnction returns Boolean 
             validator: validator.isEmail,
             message: "Please provide a valid email",
         },
@@ -25,6 +26,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide password"],
         minlength: 6,
+        //to not send the password when some one call this id 
         select: false,
     },
     lastName: {
@@ -41,22 +43,26 @@ const UserSchema = new mongoose.Schema({
     },
 });
 
-// UserSchema.pre('save', async function () {
-//   // console.log(this.modifiedPaths())
-//   if (!this.isModified('password')) return
-//   const salt = await bcrypt.genSalt(10)
-//   this.password = await bcrypt.hash(this.password, salt)
-// })
+UserSchema.pre('save',async function() {
+   // console.log(this)
+   //use function keyword to use this 
+   //this refers to the  current user document .
+// dont retrigger this hook with doc.save() ot the hashed password will be reshashed again and you wony be able to compare it 
+   const salt  = await bcrypt.genSalt(10)
+   this.password = await bcrypt.hash(this.password,salt)
 
-// UserSchema.methods.createJWT = function () {
-//   return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
-//     expiresIn: process.env.JWT_LIFETIME,
-//   })
-// }
+})
 
-// UserSchema.methods.comparePassword = async function (candidatePassword) {
-//   const isMatch = await bcrypt.compare(candidatePassword, this.password)
-//   return isMatch
-// }
+
+UserSchema.methods.createJwt = function () {
+const token  = jwt.sign({userId:this._id},process.env.JWT_SECRET,{expiresIn:process.env.JWT_LIFETIME})
+return token
+}
+//to compare the password 
+UserSchema.methods.comparePassword =async function (canditatePassword) {
+const isMatch = await bcrypt.compare(canditatePassword,this.password)
+return isMatch
+}
 
 export default mongoose.model("User", UserSchema);
+

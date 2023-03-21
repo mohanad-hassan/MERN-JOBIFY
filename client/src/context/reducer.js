@@ -1,4 +1,4 @@
-import {DISPLAY_ALERT,CLEAR_ALRET} from'./actions'
+import {DISPLAY_ALERT,CLEAR_ALRET ,REGISER_UESR_BEGIN,REGISER_UESR_SUCCESS,REGISER_UESR_ERROR,LOGIN_UESR_BEGIN,LOGIN_UESR_SUCCESS,LOGIN_UESR_ERROR} from'./actions'
 
 
 export const reducer  = (state,action ) => { 
@@ -20,6 +20,69 @@ export const reducer  = (state,action ) => {
           alertText: '',
         };
       }
+    if (action.type === REGISER_UESR_BEGIN) {
+        return {
+          ...state,
+      isLoading:true
+        };
+      }
+    if (action.type === REGISER_UESR_ERROR) {
+        return {
+          ...state,
+      isLoading:false , 
+      showAlert:true ,
+      alertType:'danger',
+      alertText:action.payload.msg
+        };
+      }
+    if (action.type === REGISER_UESR_SUCCESS) {
+        return {
+          ...state,
+      isLoading:false , 
+      showAlert:true ,
+      alertType:'success',
+      alertText:'user Created  , Redirecting ',
+      user :action.payload.user,
+      token :action.payload.token,
+      userKocation :action.payload.location,
+      jobLocation :action.payload.location,
+        };}
+
+        if (action.type === LOGIN_UESR_BEGIN) {
+          return {
+            ...state,
+        isLoading:true
+          };
+        }
+
+
+    
+
+      if (action.type === LOGIN_UESR_SUCCESS) {
+          return {
+            ...state,
+        isLoading:false , 
+        showAlert:true ,
+        alertType:'success',
+        alertText:'user LoggedIn  , Redirecting ',
+        user :action.payload.user,
+        token :action.payload.token,
+        userKocation :action.payload.location,
+        jobLocation :action.payload.location,
+          };
+        }
+  
+
+
+        if (action.type === LOGIN_UESR_ERROR) {
+          return {
+            ...state,
+        isLoading:false , 
+        showAlert:true ,
+        alertType:'danger',
+        alertText:action.payload.msg
+          };
+        }
 
       throw new Error(`no such action : ${action.type}`);
     }
