@@ -44,11 +44,17 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.pre('save',async function() {
-   // console.log(this)
+    // console.log(this.modifiedPaths())
+    // console.log(this.isModified('password'))
    //use function keyword to use this 
    //this refers to the  current user document .
 // dont retrigger this hook with doc.save() ot the hashed password will be reshashed again and you wony be able to compare it 
-   const salt  = await bcrypt.genSalt(10)
+  
+
+
+if(!this.isModified('password')) return
+
+const salt  = await bcrypt.genSalt(10)
    this.password = await bcrypt.hash(this.password,salt)
 
 })

@@ -1,6 +1,6 @@
 import { useState, useEffect, createContext, useContext, useReducer, useRef } from "react";
 import { reducer } from "./reducer";
-import {DISPLAY_ALERT,CLEAR_ALRET ,REGISER_UESR_BEGIN,REGISER_UESR_SUCCESS,REGISER_UESR_ERROR,LOGIN_UESR_BEGIN,LOGIN_UESR_SUCCESS,LOGIN_UESR_ERROR} from'./actions'
+import {DISPLAY_ALERT,CLEAR_ALRET ,REGISER_UESR_BEGIN,REGISER_UESR_SUCCESS,REGISER_UESR_ERROR,LOGIN_UESR_BEGIN,LOGIN_UESR_SUCCESS,LOGIN_UESR_ERROR,TOGGLE_SIDEBAR,LOGOUT_USER} from'./actions'
 import axios from 'axios'
 
 
@@ -16,7 +16,9 @@ const initialState = {
     user:user?JSON.parse(user):null ,
     token:token||null ,
     userLocation : userLocation||'' , 
-    jobLocation : userLocation||'' 
+    jobLocation : userLocation||'' ,
+    showSidebar:false ,
+    
 };
 
 const AppContext = createContext();
@@ -39,7 +41,7 @@ dispatch({type:DISPLAY_ALERT})
     localStorage.setItem('location',location)
    }
 
-   const removeUserFromLocalStorage  = ({user,token , location}) => { 
+   const removeUserFromLocalStorage  = () => { 
     localStorage.removeItem('user')
     localStorage.removeItem('token')
     localStorage.removeItem('location')
@@ -76,10 +78,24 @@ try {
 }
     }
 
+
+
+     const toggleSidebar = () => { 
+        dispatch({type:TOGGLE_SIDEBAR})
+      }
+
+     const logoutUser = () => { 
+        dispatch({type:LOGOUT_USER})
+        removeUserFromLocalStorage()
+      }
+
+      const updateUser = (user) => { console.table(user) }
+
+
     return (
         <AppContext.Provider
             value={{
-                ...state,displayAlert,clearAlert,registerUser, loginUser
+                ...state,displayAlert,clearAlert,registerUser, loginUser,logoutUser,toggleSidebar,updateUser
             }}
         >
             {children}

@@ -1,5 +1,6 @@
-import {DISPLAY_ALERT,CLEAR_ALRET ,REGISER_UESR_BEGIN,REGISER_UESR_SUCCESS,REGISER_UESR_ERROR,LOGIN_UESR_BEGIN,LOGIN_UESR_SUCCESS,LOGIN_UESR_ERROR} from'./actions'
+import {DISPLAY_ALERT,CLEAR_ALRET ,REGISER_UESR_BEGIN,REGISER_UESR_SUCCESS,REGISER_UESR_ERROR,LOGIN_UESR_BEGIN,LOGIN_UESR_SUCCESS,LOGIN_UESR_ERROR,TOGGLE_SIDEBAR,LOGOUT_USER} from'./actions'
 
+import { initialState } from './appContext';
 
 export const reducer  = (state,action ) => { 
 
@@ -81,6 +82,22 @@ export const reducer  = (state,action ) => {
         showAlert:true ,
         alertType:'danger',
         alertText:action.payload.msg
+          };
+        }
+        if (action.type === TOGGLE_SIDEBAR) {
+          return {
+            ...state,
+            showSidebar:!state.showSidebar
+          };
+        }
+
+        if (action.type === LOGOUT_USER) {
+          return {
+            ...initialState,
+            token:null ,
+            user:null ,
+            userLocation:null ,
+            jobLocation:null
           };
         }
 

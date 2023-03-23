@@ -6,11 +6,7 @@ function App() {
   return (
     <BrowserRouter >
 
-<nav>
-  <Link to={'/'}>DASHBOARD|||</Link>
-  <Link to={'/register'}>REGISTER|||</Link>
-  <Link to={'/landing'}>LANDING|||</Link>
-</nav>
+
 
      <Routes>
 

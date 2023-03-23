@@ -14,6 +14,8 @@ import connectDB from "./db/connect.js"
 //Routers
 import authRouter  from './routes/authRoutes.js'
 import jobsRouter  from './routes/jobsRouter.js'
+import authenticateUser from './middleware/auth.js'
+
 const app  = express()
 dotenv.config()
 //this line is so important to allow communicate between backend and front end 
@@ -38,7 +40,7 @@ app.get('/api/v1', (req,res) => {
     res.json({msg:"WELCOME to MERN PROJECT"}) })
 
     app.use('/api/v1/auth',authRouter)
-    app.use('/api/v1/jobs',jobsRouter)
+    app.use('/api/v1/jobs',authenticateUser,jobsRouter)
 
 
 
