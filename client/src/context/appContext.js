@@ -1,6 +1,6 @@
 import { useState, useEffect, createContext, useContext, useReducer, useRef } from "react";
 import { reducer } from "./reducer";
-import {DISPLAY_ALERT,CLEAR_ALRET ,REGISER_UESR_BEGIN,REGISER_UESR_SUCCESS,REGISER_UESR_ERROR,LOGIN_UESR_BEGIN,LOGIN_UESR_SUCCESS,LOGIN_UESR_ERROR,TOGGLE_SIDEBAR,LOGOUT_USER} from'./actions'
+import {DISPLAY_ALERT,CLEAR_ALRET ,REGISER_UESR_BEGIN,REGISER_UESR_SUCCESS,REGISER_UESR_ERROR,LOGIN_UESR_BEGIN,LOGIN_UESR_SUCCESS,LOGIN_UESR_ERROR,TOGGLE_SIDEBAR,LOGOUT_USER,UPDATE_USER_BEGIN,UPDATE_USER_SUCCESS,UPDATE_USER_ERROR} from'./actions'
 import axios from 'axios'
 
 
@@ -25,6 +25,27 @@ const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
     const [state,dispatch]  = useReducer(reducer,initialState) 
+
+// axios
+const authFetch = axios.create({
+    baseURL: '/api/v1',headers:{Authorization:`Bearer ${state.token}`}
+  });
+  // request
+
+  // response
+
+  authFetch.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    (error) => {
+      // console.log(error.response)
+      if (error.response.status === 401) {
+        logoutUser();
+      }
+      return Promise.reject(error);
+    }
+  );
 
 const displayAlert  = () => { 
 dispatch({type:DISPLAY_ALERT})
@@ -89,7 +110,27 @@ try {
         removeUserFromLocalStorage()
       }
 
-      const updateUser = (user) => { console.table(user) }
+      const updateUser = async (currentUser) => {
+        dispatch({ type: UPDATE_USER_BEGIN });
+        try {
+          const { data } = await authFetch.patch('/auth/updateUser', currentUser);
+          const { user, location } = data;
+    
+          dispatch({
+            type: UPDATE_USER_SUCCESS,
+            payload: { user, location },
+          });
+        } catch (error) {
+          if (error.response.status !== 401) {
+            dispatch({
+              type: UPDATE_USER_ERROR,
+              payload: { msg: error.response.data.msg },
+            });
+          }
+        }
+        clearAlert();
+      };
+    
 
 
     return (

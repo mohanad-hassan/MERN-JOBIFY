@@ -1,4 +1,4 @@
-import {DISPLAY_ALERT,CLEAR_ALRET ,REGISER_UESR_BEGIN,REGISER_UESR_SUCCESS,REGISER_UESR_ERROR,LOGIN_UESR_BEGIN,LOGIN_UESR_SUCCESS,LOGIN_UESR_ERROR,TOGGLE_SIDEBAR,LOGOUT_USER} from'./actions'
+import {DISPLAY_ALERT,CLEAR_ALRET ,REGISER_UESR_BEGIN,REGISER_UESR_SUCCESS,REGISER_UESR_ERROR,LOGIN_UESR_BEGIN,LOGIN_UESR_SUCCESS,LOGIN_UESR_ERROR,TOGGLE_SIDEBAR,LOGOUT_USER,UPDATE_USER_BEGIN,UPDATE_USER_SUCCESS,UPDATE_USER_ERROR} from'./actions'
 
 import { initialState } from './appContext';
 
@@ -98,6 +98,31 @@ export const reducer  = (state,action ) => {
             user:null ,
             userLocation:null ,
             jobLocation:null
+          };
+        }
+
+        if (action.type === UPDATE_USER_BEGIN) {
+          return { ...state, isLoading: true };
+        }
+        if (action.type === UPDATE_USER_SUCCESS) {
+          return {
+            ...state,
+            isLoading: false,
+            user: action.payload.user,
+            userLocation: action.payload.location,
+            jobLocation: action.payload.location,
+            showAlert: true,
+            alertType: 'success',
+            alertText: 'User Profile Updated!',
+          };
+        }
+        if (action.type === UPDATE_USER_ERROR) {
+          return {
+            ...state,
+            isLoading: false,
+            showAlert: true,
+            alertType: 'danger',
+            alertText: action.payload.msg,
           };
         }
 
