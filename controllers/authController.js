@@ -10,7 +10,7 @@ if (!name ||!email || !password ) {
 
 const emailAlreadyExist = await User.findOne({email})
     if (emailAlreadyExist ) {
-throw new BadRequestError ( "the email is already exist ")
+throw new BadRequestError ( "the email is already exist")
     }
 
     const user  = await User.create({name,email,password})
@@ -21,9 +21,7 @@ res.status(StatusCodes.CREATED).json({
       lastName: user.lastName,
       name: user.name,
     } , token ,      location: user.location,
-
-
-  });        }
+  })      }
 
 const login  = async(req,res) => { 
   const {email,password} = req.body ; 
@@ -42,9 +40,6 @@ if(!passwordIsCorrect) {
 const token  = user.createJwt()
 user.password = undefined
 res.status(StatusCodes.OK).json({user,token,userLocation : user.location})
-
-
-  
   }
 
 

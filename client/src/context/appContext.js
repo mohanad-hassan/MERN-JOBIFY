@@ -1,6 +1,6 @@
-import { useState, useEffect, createContext, useContext, useReducer, useRef } from "react";
+import React, { useState, useEffect, createContext, useContext, useReducer, useRef } from "react";
 import { reducer } from "./reducer";
-import {DISPLAY_ALERT,CLEAR_ALRET ,REGISER_UESR_BEGIN,REGISER_UESR_SUCCESS,REGISER_UESR_ERROR,LOGIN_UESR_BEGIN,LOGIN_UESR_SUCCESS,LOGIN_UESR_ERROR,TOGGLE_SIDEBAR,LOGOUT_USER,UPDATE_USER_BEGIN,UPDATE_USER_SUCCESS,UPDATE_USER_ERROR} from'./actions'
+import {DISPLAY_ALERT,CLEAR_ALRET ,REGISER_UESR_BEGIN,REGISER_UESR_SUCCESS,REGISER_UESR_ERROR,LOGIN_UESR_BEGIN,LOGIN_UESR_SUCCESS,LOGIN_UESR_ERROR,TOGGLE_SIDEBAR,LOGOUT_USER,UPDATE_USER_BEGIN,UPDATE_USER_SUCCESS,UPDATE_USER_ERROR,HANDLE_CHANGE, CLEAR_VALUES,CREATE_JOB_BEGIN,CREATE_JOB_ERROR,CREATE_JOB_SUCCESS,GET_JOBS_BEGIN,GET_JOBS_SUCCESS,SET_EDIT_JOB} from'./actions'
 import axios from 'axios'
 
 
@@ -16,8 +16,20 @@ const initialState = {
     user:user?JSON.parse(user):null ,
     token:token||null ,
     userLocation : userLocation||'' , 
-    jobLocation : userLocation||'' ,
     showSidebar:false ,
+    isEditing: false,
+    editJobId: '',
+    position: '',
+    company: '',
+    jobLocation: userLocation||'',
+    jobTypeOptions: ['full-time', 'part-time', 'remote', 'internship'],
+    jobType: 'full-time',
+    statusOptions: ['interview', 'declined', 'pending'],
+    status: 'pending',
+    jobs:[] ,
+    totalJobs:0,
+    page:1,
+    numOfPages:1
     
 };
 
@@ -127,16 +139,69 @@ try {
               payload: { msg: error.response.data.msg },
             });
           }
+          logoutUser()
         }
         clearAlert();
       };
     
+      const handleChange = (key,value) => { 
+        dispatch({type:HANDLE_CHANGE,payload:{key,value}})
+       }
 
+      const clearValues = (key,value) => { 
+        dispatch({type:CLEAR_VALUES,})
+       }
+
+       const createJob = async () => {
+        dispatch({ type: CREATE_JOB_BEGIN });
+        try {
+          const { position, company, jobLocation, jobType, status } = state;
+          await authFetch.post('/jobs', {
+            position,
+            company,
+            jobLocation,
+            jobType,
+            status,
+          });
+          dispatch({ type: CREATE_JOB_SUCCESS });
+          dispatch({ type: CLEAR_VALUES });
+        } catch (error) {
+          if (error.response.status === 401) return;
+          dispatch({
+            type: CREATE_JOB_ERROR,
+            payload: { msg: error.response.data.msg },
+          });
+        }
+        clearAlert();
+      };
+
+      const getJobs =async () => { 
+        let url = `/jobs`
+        dispatch({type:GET_JOBS_BEGIN})
+        try {
+          const {data}  = await authFetch(url)
+          const {jobs,numOfPages,totalJobs} = data;
+          dispatch({type:GET_JOBS_SUCCESS,payload:{jobs,numOfPages,totalJobs}})
+        } catch (error) {
+          console.log(error.response)
+          //logoutUser()
+        }
+        clearAlert()
+       }
+
+       const setEditJob = (id) => {
+        dispatch({ type: SET_EDIT_JOB, payload: { id } })
+      }
+      const editJob = () => {
+        console.log('edit job')
+      }
+
+const    deleteJob=(id) => { console.log(`deleteJob${id}`) }
 
     return (
         <AppContext.Provider
             value={{
-                ...state,displayAlert,clearAlert,registerUser, loginUser,logoutUser,toggleSidebar,updateUser
+                ...state,displayAlert,clearAlert,registerUser, loginUser,logoutUser,toggleSidebar,updateUser,handleChange,clearValues,createJob,getJobs,setEditJob,deleteJob,editJob
             }}
         >
             {children}
