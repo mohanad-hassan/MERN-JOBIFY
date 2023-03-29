@@ -1,6 +1,7 @@
 import {DISPLAY_ALERT,CLEAR_ALRET ,REGISER_UESR_BEGIN,REGISER_UESR_SUCCESS,REGISER_UESR_ERROR,LOGIN_UESR_BEGIN,LOGIN_UESR_SUCCESS,LOGIN_UESR_ERROR,TOGGLE_SIDEBAR,LOGOUT_USER,UPDATE_USER_BEGIN,UPDATE_USER_SUCCESS,UPDATE_USER_ERROR,HANDLE_CHANGE,CLEAR_VALUES,CREATE_JOB_BEGIN,CREATE_JOB_ERROR,CREATE_JOB_SUCCESS,GET_JOBS_BEGIN,GET_JOBS_SUCCESS,SET_EDIT_JOB,DELETE_JOB_BEGIN,EDIT_JOB_BEGIN
   ,EDIT_JOB_SUCCESS
-,EDIT_JOB_ERROR} from'./actions'
+,EDIT_JOB_ERROR,SHOW_STATS_BEGIN,
+SHOW_STATS_SUCCESS} from'./actions'
 
 import { initialState } from './appContext';
 
@@ -235,6 +236,18 @@ export const reducer  = (state,action ) => {
           };
         }
 
+
+        if (action.type === SHOW_STATS_BEGIN) {
+          return { ...state, isLoading: true, showAlert: false };
+        }
+        if (action.type === SHOW_STATS_SUCCESS) {
+          return {
+            ...state,
+            isLoading: false,
+            stats: action.payload.stats,
+            monthlyApplications: action.payload.monthlyApplications,
+          };
+        }
 
       throw new Error(`no such action : ${action.type}`);
     }
