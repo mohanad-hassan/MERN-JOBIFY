@@ -20,8 +20,19 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
+import helmet from 'helmet';
+import xss from 'xss-clean';
+import mongoSanitize from 'express-mongo-sanitize';
+import rateLimiter from 'express-rate-limit';
+
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+const apiLimiter = rateLimiter({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 1000,
+    message: 'Too many requests from this IP, please try again after 15 minutes',
+  });
 
 const app  = express()
 dotenv.config()
@@ -34,7 +45,9 @@ if (process.env.NODE_ENV !=='production'){
 }
 //to parse json from the request 
 app.use(express.json())
-
+app.use(helmet());
+app.use(xss());
+app.use(mongoSanitize());
 
 //Routes
 // app.get('/', (req,res) => {
@@ -46,8 +59,8 @@ app.get('/api/v1', (req,res) => {
 
     res.json({msg:"WELCOME to MERN PROJECT"}) })
 
-    app.use('/api/v1/auth',authRouter)
-    app.use('/api/v1/jobs',authenticateUser,jobsRouter)
+    app.use('/api/v1/auth',apiLimiter,authRouter)
+    app.use('/api/v1/jobs',apiLimiter,authenticateUser,jobsRouter)
 
     // only when ready to deploy
 app.use(express.static(path.resolve(__dirname, './client/build')));
