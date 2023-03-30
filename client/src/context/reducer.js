@@ -1,7 +1,7 @@
 import {DISPLAY_ALERT,CLEAR_ALRET ,REGISER_UESR_BEGIN,REGISER_UESR_SUCCESS,REGISER_UESR_ERROR,LOGIN_UESR_BEGIN,LOGIN_UESR_SUCCESS,LOGIN_UESR_ERROR,TOGGLE_SIDEBAR,LOGOUT_USER,UPDATE_USER_BEGIN,UPDATE_USER_SUCCESS,UPDATE_USER_ERROR,HANDLE_CHANGE,CLEAR_VALUES,CREATE_JOB_BEGIN,CREATE_JOB_ERROR,CREATE_JOB_SUCCESS,GET_JOBS_BEGIN,GET_JOBS_SUCCESS,SET_EDIT_JOB,DELETE_JOB_BEGIN,EDIT_JOB_BEGIN
   ,EDIT_JOB_SUCCESS
 ,EDIT_JOB_ERROR,SHOW_STATS_BEGIN,
-SHOW_STATS_SUCCESS,CLEAR_FILTERS} from'./actions'
+SHOW_STATS_SUCCESS,CLEAR_FILTERS,CHANGE_PAGE} from'./actions'
 
 import { initialState } from './appContext';
 
@@ -131,7 +131,7 @@ export const reducer  = (state,action ) => {
 
         if (action.type === HANDLE_CHANGE) {
           return {
-            ...state,
+            ...state,page:1,
             [action.payload.key]:action.payload.value
           };
         }
@@ -257,6 +257,10 @@ export const reducer  = (state,action ) => {
             searchType: 'all',
             sort: 'latest',
           };
+        }
+        
+        if (action.type === CHANGE_PAGE) {
+          return { ...state, page: action.payload.page };
         }
 
       throw new Error(`no such action : ${action.type}`);

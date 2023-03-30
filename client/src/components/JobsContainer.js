@@ -3,14 +3,16 @@ import { useAppContext } from "../context/appContext";
 import { useEffect } from "react";
 import Job from "./Job";
 import Wrapper from "../assets/wrappers/JobsContainer";
+import PageBtnContainer from './PageBtnContainer';
+
 const JobsContainer = () => {
   const { getJobs, jobs, isLoading, page, totalJobs,
     search,
     searchStatus,
     searchType,
-    sort, } = useAppContext();
+    sort, numOfPages} = useAppContext();
 
-  useEffect(() => { getJobs() },[ search, searchStatus, searchType, sort])
+  useEffect(() => { getJobs() },[ search, searchStatus, searchType, sort,page])
 
   if(isLoading) {
     return <Loading center={true}/>
@@ -36,7 +38,7 @@ const JobsContainer = () => {
   })
   }
   </div>
-jobsContainer
+  {numOfPages > 1 && <PageBtnContainer />}
 
 {/* pagination buttons */}
     </Wrapper>
