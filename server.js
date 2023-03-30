@@ -16,6 +16,13 @@ import authRouter  from './routes/authRoutes.js'
 import jobsRouter  from './routes/jobsRouter.js'
 import authenticateUser from './middleware/auth.js'
 
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 const app  = express()
 dotenv.config()
 //this line is so important to allow communicate between backend and front end 
@@ -30,11 +37,11 @@ app.use(express.json())
 
 
 //Routes
-app.get('/', (req,res) => {
-    //when you throw error it goes out from this route and go to errorHandlerMiddleware function in app.use
-    //throw new Error()
+// app.get('/', (req,res) => {
+//     //when you throw error it goes out from this route and go to errorHandlerMiddleware function in app.use
+//     //throw new Error()
 
-    res.json({msg:"WELCOME to MERN PROJECT"}) })
+//     res.json({msg:"WELCOME to MERN PROJECT"}) })
 app.get('/api/v1', (req,res) => {
 
     res.json({msg:"WELCOME to MERN PROJECT"}) })
@@ -42,6 +49,13 @@ app.get('/api/v1', (req,res) => {
     app.use('/api/v1/auth',authRouter)
     app.use('/api/v1/jobs',authenticateUser,jobsRouter)
 
+    // only when ready to deploy
+app.use(express.static(path.resolve(__dirname, './client/build')));
+
+// only when ready to deploy
+app.get('*', function (request, response) {
+  response.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
+});
 
 
 

@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "build-client": "cd client && npm run build",
     "server": "nodemon server --ignore client",
     "note": "ignore client is from nodemon to prevent restart the backend server when its refreshing the client server ",
     "client": "npm start --prefix client",

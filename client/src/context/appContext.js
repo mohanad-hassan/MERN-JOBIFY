@@ -1,10 +1,7 @@
 import React, {
-  useState,
-  useEffect,
   createContext,
   useContext,
   useReducer,
-  useRef,
 } from "react";
 import { reducer } from "./reducer";
 import {
@@ -232,8 +229,7 @@ const AppProvider = ({ children }) => {
         payload: { jobs, numOfPages, totalJobs },
       });
     } catch (error) {
-      console.log(error.response);
-      //logoutUser()
+      logoutUser()
     }
     clearAlert();
   };
@@ -273,8 +269,7 @@ const AppProvider = ({ children }) => {
       await authFetch.delete(`/jobs/${id}`);
       getJobs();
     } catch (error) {
-      console.log(error.response);
-      // logoutUser();
+      logoutUser();
     }
   };
 
@@ -290,8 +285,7 @@ const AppProvider = ({ children }) => {
         },
       });
     } catch (error) {
-      console.log(error.response);
-      // logoutUser()
+       logoutUser()
     }
 
     clearAlert();
